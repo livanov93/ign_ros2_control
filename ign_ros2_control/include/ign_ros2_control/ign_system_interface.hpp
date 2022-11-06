@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-#include <ignition/gazebo/System.hh>
+#include <gz/sim/System.hh>
 
 #include <hardware_interface/system_interface.hpp>
 #include <hardware_interface/types/hardware_interface_type_values.hpp>
@@ -84,9 +84,9 @@ public:
   /// param[in] update_rate controller update rate
   virtual bool initSim(
     rclcpp::Node::SharedPtr & model_nh,
-    std::map<std::string, ignition::gazebo::Entity> & joints,
+    std::map<std::string, gz::sim::Entity> & joints,
     const hardware_interface::HardwareInfo & hardware_info,
-    ignition::gazebo::EntityComponentManager & _ecm,
+    gz::sim::EntityComponentManager & _ecm,
     int & update_rate) = 0;
 
   // Methods used to control a joint.

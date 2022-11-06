@@ -39,14 +39,19 @@ elseif("$ENV{IGNITION_VERSION}" STREQUAL "fortress")
   set(IGN_GAZEBO_VER ${ignition-gazebo6_VERSION_MAJOR})
   message(STATUS "Compiling against Ignition Fortress")
 
+elseif("$ENV{IGNITION_VERSION}" STREQUAL "garden")
+  find_package(gz-sim7 REQUIRED)
+  set(IGN_GAZEBO_VER ${gz-sim7_VERSION_MAJOR})
+  message(STATUS "Compiling against Ignition Garden")
+
 else()
   find_package(ignition-gazebo6 REQUIRED)
   set(IGN_GAZEBO_VER ${ignition-gazebo6_VERSION_MAJOR})
   message(STATUS "Compiling against Ignition Fortress")
 endif()
 
-find_package(ignition-plugin1 REQUIRED)
-set(IGN_PLUGIN_VER ${ignition-plugin1_VERSION_MAJOR})
+find_package(gz-plugin2 REQUIRED)
+set(IGN_PLUGIN_VER ${gz-plugin2_VERSION_MAJOR})
 
 include_directories(include)
 
@@ -55,8 +60,8 @@ add_library(${PROJECT_NAME}-system SHARED
 )
 
 target_link_libraries(${PROJECT_NAME}-system
-  ignition-gazebo${IGN_GAZEBO_VER}::core
-  ignition-plugin${IGN_PLUGIN_VER}::register
+  gz-sim${IGN_GAZEBO_VER}::core
+  gz-plugin${IGN_PLUGIN_VER}::register
 )
 ament_target_dependencies(${PROJECT_NAME}-system
   ament_index_cpp
@@ -79,7 +84,7 @@ ament_target_dependencies(ign_hardware_plugins
   rclcpp
 )
 target_link_libraries(ign_hardware_plugins
-  ignition-gazebo${IGN_GAZEBO_VER}::core
+  gz-sim${IGN_GAZEBO_VER}::core
 )
 
 ## Install
