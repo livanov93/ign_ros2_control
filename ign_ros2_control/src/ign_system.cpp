@@ -632,24 +632,40 @@ hardware_interface::return_type IgnitionSystem::write(
 
     if (this->dataPtr->joints_[i].joint_control_method & POSITION) {
       // Get error in position
-      double error = this->dataPtr->joints_[i].joint_position_cmd -
-        this->dataPtr->joints_[i].joint_position;
+//      double error = this->dataPtr->joints_[i].joint_position_cmd -
+//        this->dataPtr->joints_[i].joint_position;
+//
+//      // Calculate target velocity
+//      double maxVel = this->dataPtr->ecm->Component<ignition::gazebo::components::JointAxis>(
+//        this->dataPtr->joints_[i].sim_joint)->Data().MaxVelocity();
+//      double targetVel = std::clamp(error * (*this->dataPtr->update_rate), -1.0 * maxVel, maxVel);
+//
+//      auto vel =
+//        this->dataPtr->ecm->Component<ignition::gazebo::components::JointVelocityReset>(
+//        this->dataPtr->joints_[i].sim_joint);
 
-      // Calculate target velocity
-      double maxVel = this->dataPtr->ecm->Component<ignition::gazebo::components::JointAxis>(
-        this->dataPtr->joints_[i].sim_joint)->Data().MaxVelocity();
-      double targetVel = std::clamp(error * (*this->dataPtr->update_rate), -1.0 * maxVel, maxVel);
+//      if (vel == nullptr) {
 
-      auto vel =
-        this->dataPtr->ecm->Component<ignition::gazebo::components::JointVelocityReset>(
-        this->dataPtr->joints_[i].sim_joint);
+      if (!this->dataPtr->ecm->Component<ignition::gazebo::components::JointPositionReset>(
+          this->dataPtr->joints_[i].sim_joint))
+      {
+//        this->dataPtr->ecm->CreateComponent(
+//          this->dataPtr->joints_[i].sim_joint,
+//          ignition::gazebo::components::JointVelocityReset({targetVel}));
 
-      if (vel == nullptr) {
         this->dataPtr->ecm->CreateComponent(
           this->dataPtr->joints_[i].sim_joint,
-          ignition::gazebo::components::JointVelocityReset({targetVel}));
-      } else if (!vel->Data().empty()) {
-        vel->Data()[0] = targetVel;
+          ignition::gazebo::components::JointPositionReset(
+            {this->dataPtr->joints_[i].
+              joint_position_cmd}));
+//      } else if (!vel->Data().empty()) {
+//        vel->Data()[0] = targetVel;
+      } else {
+        const auto jointPosCmd =
+          this->dataPtr->ecm->Component<ignition::gazebo::components::JointPositionReset>(
+          this->dataPtr->joints_[i].sim_joint);
+        *jointPosCmd = ignition::gazebo::components::JointPositionReset(
+          {this->dataPtr->joints_[i].joint_position_cmd});
       }
     }
 
